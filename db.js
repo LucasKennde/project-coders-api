@@ -6,7 +6,10 @@ const jwt = require("jsonwebtoken");
 // Configurações do Supabase
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey, {
+    timeout: 60000,
+});
+
 
 async function insertUser(newUser) {
     try {
