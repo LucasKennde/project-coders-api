@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const db = require("./db.js");
 const cors = require("cors");
+const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const app = express();
 app.use(cors());
