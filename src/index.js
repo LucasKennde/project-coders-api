@@ -3,14 +3,30 @@ const express = require("express");
 const db = require("./db.js");
 const cors = require("cors");
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ storage });
+const { v2: cloudinary } = require("cloudinary");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: "uploads",
+        allowed_formats: ["jpg", "png", "jpeg"],
+    },
+});
+
 app.post('/upload/image', upload.single('image'), (req, res) => {
-    const imagePath = req.file.path;
-    res.status(200).json({ imageUrl: imagePath });
+    const imageUrl = req.file.path;
+    res.status(200).json({ imageUrl });
 });
 
 app.post("/users", async (req, res) => {
