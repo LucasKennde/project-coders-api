@@ -7,6 +7,38 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    folder: "uploads",
+    allowedFormats: ["jpg", "png", "jpeg", "gif"],
+});
+
+const upload = multer({ storage: storage });
+
+app.post("/product", upload.single("image"), async (req, res) => {
+    try {
+        const newProduct = {
+            ...req.body,
+            image: req.file.path,
+        };
+        const data = await db.insertProduct(newProduct);
+        res.status(201).json(data);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+
 app.post("/users", async (req, res) => {
     try {
         const newUser = req.body;
