@@ -3,7 +3,6 @@ const express = require("express");
 const db = require("./db.js");
 const cors = require("cors");
 const multer = require('multer');
-const upload = multer({ storage });
 const { v2: cloudinary } = require("cloudinary");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const app = express();
@@ -23,6 +22,7 @@ const storage = new CloudinaryStorage({
         allowed_formats: ["jpg", "png", "jpeg"],
     },
 });
+const upload = multer({ storage });
 
 app.post('/upload/image', upload.single('image'), (req, res) => {
     const imageUrl = req.file.path;
